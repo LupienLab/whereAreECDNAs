@@ -153,6 +153,6 @@ getFragment <- function(fragmentPath,
     gr <- GenomeInfoDb::keepStandardChromosomes(gr, pruning.mode = "coarse")
   }
 
-  msg("[getFragment] Fragment loading completed. A total of %d raw fragments were loaded. ", length(gr))
+  msg("[getFragment] A total of %d raw fragments were loaded. ", length(gr))
   gr
 }

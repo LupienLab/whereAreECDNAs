@@ -13,6 +13,7 @@ callPeak(
   shift = -100L,
   extsize = 200L,
   qval = 0.05,
+  keepDup = "all",
   nThreads = 1,
   extraArgs = NULL,
   keepStandard = TRUE,
@@ -41,6 +42,10 @@ possible.}
 
 \item{qval}{Numeric(1). MACS2 \code{-q} in (0, 1]. Default is 0.05.}
 
+\item{keepDup}{Character(1), integer(1), or \code{NULL}. MACS2 \code{--keep-dup}
+setting. The default is \code{"all"} for pseudobulk single-cell ATAC-seq BED
+input. Use \code{NULL} to omit this argument and use the MACS2 default.}
+
 \item{nThreads}{Integer(1) >= 1. Threads for \code{data.table::fwrite()} (default: 1).}
 
 \item{extraArgs}{Character vector of additional MACS2 arguments (default: \code{NULL}).}
@@ -61,8 +66,11 @@ pseudobulk fragments. The resulting \code{.narrowPeak} file is imported as a
 The default MACS2 settings are chosen for pseudobulk single-cell ATAC-seq
 fragments represented as BED-like intervals. \code{--nomodel}, \code{--shift -100},
 and \verb{--extsize 200} are commonly used to center and extend Tn5 insertion
-signal when calling narrow ATAC-seq peaks from BED input. For more stringent
-peak sets, consider reducing \code{qval} from \code{0.05} to \code{0.01}.
+signal when calling narrow ATAC-seq peaks from BED input. \verb{--keep-dup all}
+is used by default because identical fragment coordinates can arise from
+independent cells in pseudobulk single-cell ATAC-seq data and should not be
+collapsed by MACS2 duplicate filtering. For more stringent peak sets,
+consider reducing \code{qval} from \code{0.05} to \code{0.01}.
 }
 \examples{
 \dontrun{

@@ -138,8 +138,8 @@ getWhereAreECDNAsVerbose <- function(){
   density_x <- dens_df$x
   density_y <- dens_df$y
   n_density <- length(density_y)
-  maxValleyRatio <- 0.80
-  minSummitSeparationSd <- 1
+  maxValleyRatio <- 0.82
+  minSummitSeparationSd <- 0.75
 
   ## Identify local maxima and select the best separated pair of density modes.
   summit_idx <- which(

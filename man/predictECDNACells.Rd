@@ -10,11 +10,11 @@ predictECDNACells(
   numpy = NULL,
   torch = NULL,
   manualForce = FALSE,
-  proportion = c(0.1, 0.1),
+  proportion = c(0.05, 0.05),
   batchSize = 500,
   cpuForce = FALSE,
   proThreshold = 0.5,
-  seed = 2026,
+  seed = 17,
   verbose = TRUE
 )
 }

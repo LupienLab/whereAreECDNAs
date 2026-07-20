@@ -9,8 +9,11 @@
 #' The default MACS2 settings are chosen for pseudobulk single-cell ATAC-seq
 #' fragments represented as BED-like intervals. `--nomodel`, `--shift -100`,
 #' and `--extsize 200` are commonly used to center and extend Tn5 insertion
-#' signal when calling narrow ATAC-seq peaks from BED input. For more stringent
-#' peak sets, consider reducing `qval` from `0.05` to `0.01`.
+#' signal when calling narrow ATAC-seq peaks from BED input. `--keep-dup all`
+#' is used by default because identical fragment coordinates can arise from
+#' independent cells in pseudobulk single-cell ATAC-seq data and should not be
+#' collapsed by MACS2 duplicate filtering. For more stringent peak sets,
+#' consider reducing `qval` from `0.05` to `0.01`.
 #'
 #' @param object A `whereAreECDNAs` object.
 #' @param macs2Path Character(1). Path to `macs2` executable.
@@ -25,6 +28,9 @@
 #' @param shift Integer(1). MACS2 `--shift`.
 #' @param extsize Integer(1). MACS2 `--extsize`.
 #' @param qval Numeric(1). MACS2 `-q` in (0, 1]. Default is 0.05.
+#' @param keepDup Character(1), integer(1), or `NULL`. MACS2 `--keep-dup`
+#'   setting. The default is `"all"` for pseudobulk single-cell ATAC-seq BED
+#'   input. Use `NULL` to omit this argument and use the MACS2 default.
 #' @param nThreads Integer(1) >= 1. Threads for `data.table::fwrite()` (default: 1).
 #' @param extraArgs Character vector of additional MACS2 arguments (default: `NULL`).
 #' @param keepStandard Logical(1). Whether to retain only standard chromosomes.
@@ -56,6 +62,7 @@ callPeak <- function(object = NULL,
                      shift = -100L,
                      extsize = 200L,
                      qval = 0.05,
+                     keepDup = "all",
                      nThreads = 1,
                      extraArgs = NULL,
                      keepStandard = TRUE,
@@ -78,6 +85,26 @@ callPeak <- function(object = NULL,
 
   if(!is.numeric(qval) || length(qval) != 1 || is.na(qval) || qval <= 0 || qval > 1){
     stop("'qval' must be a numeric scalar in the interval (0, 1].", call. = FALSE)
+  }
+
+  keepDupArg <- NULL
+  if(!is.null(keepDup)){
+    if(is.numeric(keepDup)){
+      if(length(keepDup) != 1 || is.na(keepDup) || keepDup < 1 || keepDup != floor(keepDup)){
+        stop("'keepDup' must be NULL, 'all', 'auto', or a positive integer.", call. = FALSE)
+      }
+      keepDupArg <- as.character(as.integer(keepDup))
+    }else if(is.character(keepDup)){
+      if(length(keepDup) != 1 || is.na(keepDup) || !nzchar(keepDup)){
+        stop("'keepDup' must be NULL, 'all', 'auto', or a positive integer.", call. = FALSE)
+      }
+      keepDupArg <- tolower(keepDup)
+      if(!(keepDupArg %in% c("all", "auto") || grepl("^[1-9][0-9]*$", keepDupArg))){
+        stop("'keepDup' must be NULL, 'all', 'auto', or a positive integer.", call. = FALSE)
+      }
+    }else{
+      stop("'keepDup' must be NULL, 'all', 'auto', or a positive integer.", call. = FALSE)
+    }
   }
 
   ## Resolve the MACS2 executable path.
@@ -141,6 +168,12 @@ callPeak <- function(object = NULL,
     "--extsize", as.character(extsize),
     "-q", as.character(qval)
   )
+
+  extraArgsHasKeepDup <- !is.null(extraArgs) &&
+    any(grepl("^--keep-dup(=|$)", extraArgs))
+  if(!is.null(keepDupArg) && !extraArgsHasKeepDup){
+    args <- c(args, "--keep-dup", keepDupArg)
+  }
 
   if (!is.null(extraArgs) && length(extraArgs) > 0L) {
     args <- c(args, extraArgs)
