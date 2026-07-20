@@ -1,18 +1,3 @@
-whereAreECDNAs is an R package to identify ecDNA-positive cells from single-cell ATAC-seq data.
-
-## How to install:
-
-1. You could install it is through the devtools package:
-   
-```
-install.packages("devtools")
-library(devtools)
-install_github("LupienLab/whereAreECDNAs")
-```
-
-## How to run whereAreECDNAs: check the "testDemo.R". 
-
-
 # whereAreECDNAs
 
 `whereAreECDNAs` is an R package designed to identify ecDNA-positive cells from single-cell ATAC-seq data.
@@ -62,13 +47,13 @@ To run the demonstration, download or clone the repository and execute:
 source("testDemo.R")
 ```
 
-Users should update the input file paths and parameters in `testDemo.R` according to their own datasets.
+Before running the script, update the input file paths and analysis parameters according to your dataset.
 
 ## Input Data
 
 The analysis generally requires:
 
-* A single-cell ATAC-seq fragment file or cell-by-feature accessibility matrix.
+* A single-cell ATAC-seq fragment file.
 * A list of valid cell barcodes.
 * Genomic coordinates defining the ecDNA amplicon intervals.
 * Appropriate genome annotation and chromosome information.
@@ -77,27 +62,21 @@ All genomic coordinates should use the same reference genome assembly, such as `
 
 ## Output
 
-`whereAreECDNAs` generates cell-level estimates that can be used to describe:
+`whereAreECDNAs` generates cell-level results describing:
 
-* ecDNA-content for individual cells.
-* The probability that an individual cell is ecDNA-positive.
-* Binary ecDNA status assignments for downstream analyses.
+* The estimated ecDNA content of individual cells.
+* The probability that each cell is ecDNA-positive.
+* A binary ecDNA-positive or -negative classification for each cell.
 
-These outputs can be integrated with cell-type annotations, malignant cell classifications, transcriptional states, copy-number profiles, or other single-cell metadata.
+These outputs can be integrated with cell-type annotations, malignant cell classifications, transcriptional states, copy-number profiles, or other single-cell metadata for downstream analyses.
 
 ## Citation
 
-A citation for `whereAreECDNAs` will be provided upon publication.
+A formal citation for `whereAreECDNAs` will be provided upon publication.
 
 Until then, please cite the GitHub repository:
 
 > Lupien Lab. `whereAreECDNAs`: Identification of ecDNA-positive cells from single-cell ATAC-seq data. GitHub repository: https://github.com/LupienLab/whereAreECDNAs
-
-## Code Availability
-
-The source code is publicly available at:
-
-https://github.com/LupienLab/whereAreECDNAs
 
 ## Issues and Support
 
