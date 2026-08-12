@@ -66,11 +66,7 @@ When reporting an issue, please include:
 * The package version or GitHub commit.
 * A minimal reproducible example.
 * The complete error message.
-* Relevant session information generated using:
-
-```r
-sessionInfo()
-```
+* Relevant session information generated using: `sessionInfo()`
 
 ## License
 
