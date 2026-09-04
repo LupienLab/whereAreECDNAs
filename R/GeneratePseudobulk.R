@@ -45,7 +45,7 @@ generatePseudobulk <- function(object, verbose = TRUE){
 
   barcodes <- rownames(object@cellColData)
   if (is.null(barcodes) || length(barcodes) == 0L) {
-    stop("rownames(object@cellColData) are empty — no barcodes to filter by.", call. = FALSE)
+    stop("rownames(object@cellColData) are empty - no barcodes to filter by.", call. = FALSE)
   }
 
   ## Filter fragments to high-quality cell barcodes.
@@ -61,7 +61,6 @@ generatePseudobulk <- function(object, verbose = TRUE){
 
   return(object)
 }
-
 
 
 

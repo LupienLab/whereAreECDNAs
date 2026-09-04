@@ -126,10 +126,13 @@ getWhereAreECDNAsVerbose <- function(){
   }
   dir.create(outputDir, recursive = TRUE, showWarnings = FALSE)
 
-  ## Estimate the ecDNA content density.
+  ## Estimate a moderately smoothed density to stabilize summit detection.
   msg("[findDensityExtrema] Estimating ecDNA content density for %s-%s using %d cells.", sampleName, nth, length(content))
 
-  dens <- stats::density(content, n = 512)
+  densityBandwidthFactor <- 1.25
+  densityPilot <- stats::density(content, n = 512)
+  densityBandwidth <- densityPilot$bw * densityBandwidthFactor
+  dens <- stats::density(content, bw = densityBandwidth, n = 512)
   dens_df <- data.frame(
     x = dens$x,
     y = dens$y
@@ -138,8 +141,9 @@ getWhereAreECDNAsVerbose <- function(){
   density_x <- dens_df$x
   density_y <- dens_df$y
   n_density <- length(density_y)
-  maxValleyRatio <- 0.82
-  minSummitSeparationSd <- 0.75
+  maxValleyRatio <- 0.995
+  minSummitSeparationSd <- 0.5
+  minSummitHeight <- 0.03
 
   ## Identify local maxima and select the best separated pair of density modes.
   summit_idx <- which(
@@ -150,6 +154,11 @@ getWhereAreECDNAsVerbose <- function(){
           density_y[2:(n_density - 1L)] > density_y[3:n_density]
       )
   ) + 1L
+
+  ## Remove negligible local maxima that arise from sparse distribution tails.
+  summit_idx <- summit_idx[
+    density_y[summit_idx] >= max(density_y) * minSummitHeight
+  ]
 
   candidateModes <- NULL
 
@@ -192,7 +201,7 @@ getWhereAreECDNAsVerbose <- function(){
     candidateModes <- do.call(rbind, candidateModes[!vapply(candidateModes, is.null, logical(1))])
 
     if(!is.null(candidateModes) && nrow(candidateModes) > 0L){
-      ## Retain only candidate mode pairs with a clear intervening valley.
+      ## Retain mode pairs with a local minimum and adequate separation.
       candidateModes <- candidateModes[
         candidateModes$valley_ratio <= maxValleyRatio &
           candidateModes$separation_sd >= minSummitSeparationSd,

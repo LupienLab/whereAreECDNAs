@@ -145,6 +145,7 @@ quantifyECDNAContent <- function(
 
   n_cells <- nrow(subcellPeakMatrix)
   n_peaks <- ncol(subcellPeakMatrix)
+  n_peaks_numeric <- as.numeric(n_peaks)
 
   ## Convert the sparse matrix to a numeric vector for global ranking.
   ## Higher accessibility values receive smaller ranks because of the negative sign.
@@ -152,6 +153,7 @@ quantifyECDNAContent <- function(
     -as.vector(as.matrix(subcellPeakMatrix)),
     ties.method = tiesMethod
   )
+  rankedValues <- as.numeric(rankedValues)
 
   uMatrixRank <- matrix(
     rankedValues,
@@ -163,9 +165,19 @@ quantifyECDNAContent <- function(
   colnames(uMatrixRank) <- colnames(subcellPeakMatrix)
 
   ## Compute the Mann-Whitney U statistic.
-  uStatistic <- rowSums(uMatrixRank) - (n_peaks * (n_peaks + 1L)) / 2
+  ## Use double-precision arithmetic because peak-by-rank products can exceed
+  ## the 32-bit integer limit for large ecDNA-restricted matrices.
+  uStatistic <- rowSums(uMatrixRank) -
+    (n_peaks_numeric * (n_peaks_numeric + 1)) / 2
 
-  uScore <- 1 - uStatistic / (n_peaks * max(uMatrixRank))
+  maximumRank <- max(uMatrixRank, na.rm = TRUE)
+  normalizationDenominator <- n_peaks_numeric * as.numeric(maximumRank)
+
+  if(!is.finite(normalizationDenominator) || normalizationDenominator <= 0){
+    stop("The Mann-Whitney normalization denominator is invalid.", call. = FALSE)
+  }
+
+  uScore <- 1 - uStatistic / normalizationDenominator
 
   names(uScore) <- rownames(subcellPeakMatrix)
 

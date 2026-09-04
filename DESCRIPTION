@@ -13,13 +13,14 @@ Description: Provides functions to process single-cell ATAC-seq data for the
     supports input loading, object construction, pseudobulk generation, peak
     calling, peak-by-cell matrix construction, ecDNA content quantification, and
     probabilistic classification of ecDNA-positive cells.
-License: MIT + file LICENSE
+License: MIT
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Depends: R (>= 4.3.0)
 Imports: 
+    BiocGenerics,
     dplyr,
     data.table,
     Biobase,
@@ -29,7 +30,9 @@ Imports:
     Matrix,
     IRanges,
     S4Vectors,
-    ggplot2
+    ggplot2,
+    magrittr,
+    tibble
 Suggests: 
     testthat,
     knitr,

@@ -57,15 +57,16 @@ to estimate ecDNA-positivity probabilities for all cells.
 }
 \details{
 Putative training labels are derived from the distribution of cell-level
-ecDNA content. When the density shows two well-separated modes, the function
-identifies the dominant low-content and high-content summits and the lowest
-intervening valley. Cells at or below the low-content summit are treated as
-putative ecDNA-negative training cells, and cells above the high-content
-summit are treated as putative ecDNA-positive training cells. This provides
-conservative training labels while leaving the intermediate region
-unlabelled. If a clear bimodal structure is not detected, or if
-\code{manualForce = TRUE}, the function uses the lower and upper quantiles
-specified by \code{proportion}.
+ecDNA content. The density is estimated with a modest bandwidth increase to
+stabilize summit detection, and negligible tail maxima are excluded. When
+two supported modes are detected, the function identifies the low-content
+and high-content summits and the intervening valley. Cells at or below the
+low-content summit are treated as putative ecDNA-negative training cells,
+and cells above the high-content summit are treated as putative ecDNA-positive
+training cells. This provides conservative training labels while leaving the
+intermediate region unlabelled. If a supported bimodal structure is not
+detected, or if \code{manualForce = TRUE}, the function uses the lower and upper
+quantiles specified by \code{proportion}.
 }
 \examples{
 \dontrun{

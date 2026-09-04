@@ -42,6 +42,18 @@ The analysis generally requires:
 * A list of valid cell barcodes.
 * Genomic coordinates defining the ecDNA amplicon intervals.
 
+A small simulated dataset as the input files are available directly under
+`inst/extdata/` in the requested file formats: `.tsv.gz` fragments,
+`.txt` cell barcodes, and a `.bed` amplicon interval file.
+
+```r
+library(whereAreECDNAs)
+
+demo_dir <- system.file("extdata", package = "whereAreECDNAs")
+fragment <- getFragment(file.path(demo_dir, "demo.fragments.tsv.gz"))
+barcode <- getBarcode(file.path(demo_dir, "demo.filtercell.txt"))
+amplicon <- getAmplicon(file.path(demo_dir, "demo_amplicon.bed"))
+```
 All genomic coordinates should use the same reference genome assembly, such as `hg38`.
 
 ## Output
